@@ -44,11 +44,11 @@ function render() {
   const stale = market && Date.now() - Date.parse(market.collected_at) > 3600_000;
   notice('#market-notice', !navigator.onLine ? '오프라인입니다. 마지막 조회 가격으로 계산하며 최신 시세가 아닙니다.' : stale ? '마지막 조회 후 1시간이 지났습니다. 시세 조회 버튼을 눌러 가격을 확인하세요.' : '');
   message(s.complete ? '' : '시세가 없는 종목이 있습니다. 전체 평가금액과 손익은 계산하지 않았습니다.');
-  $('#holdings').innerHTML = items.length ? items.map((item, i) => `
-    <article class="holding"><div class="holding-top"><div><span class="code">${html(item.code)}</span><h3>${html(item.name)}</h3></div><div class="holding-price"><strong>${money(item.price)}</strong><span class="${tone(item.change_rate)}">${percent(item.change_rate)}${item.change_rate == null ? '' : ' 전일 대비'}</span></div></div>
-    ${item.error ? `<p class="notice">${html(item.error)}</p>` : ''}
-    <div class="holding-grid"><div><span>투자금액</span><strong>${money(item.invested)}</strong></div><div><span>평가금액</span><strong>${money(item.valuation)}</strong></div><div><span>평가손익</span><strong class="${tone(item.profit)}">${money(item.profit)}</strong></div><div><span>수익률</span><strong class="${tone(item.return_rate)}">${percent(item.return_rate)}</strong></div></div>
-    <div class="holding-bottom"><p class="hint">평균 취득가 ${money(item.buy)}<br>${item.quantity != null ? `계산 수량 ${item.quantity.toLocaleString('ko-KR',{maximumFractionDigits:4})}주` : '시세 확인 필요'}</p><div class="actions"><button class="text-button" data-edit="${i}">수정</button><button class="text-button" data-delete="${i}">삭제</button></div></div></article>`).join('') : '<div class="empty"><h3>첫 ETF를 기록해 보세요.</h3><p>종목을 추가하거나 PC에서 사용하던 CSV를 가져오세요.</p></div>';
+  $('#holdings').innerHTML = items.length ? items.map(item => `
+    <article class="holding">
+      <div class="holding-top"><h3 title="${html(item.name)}">${html(item.name)}</h3><strong class="holding-return ${tone(item.return_rate)}" aria-label="수익률 ${percent(item.return_rate)}" title="${html(item.error || '수익률')}">${percent(item.return_rate)}</strong></div>
+      <div class="holding-details"><div><span>투자금액</span><strong title="${money(item.invested)}">${money(item.invested)}</strong></div><div><span>평가손익</span><strong class="${tone(item.profit)}" title="${money(item.profit)}">${money(item.profit)}</strong></div></div>
+    </article>`).join('') : '<div class="empty"><h3>첫 ETF를 기록해 보세요.</h3><p>종목을 추가하거나 PC에서 사용하던 CSV를 가져오세요.</p></div>';
 }
 
 async function refresh() {
@@ -88,15 +88,6 @@ $('#holding-form').addEventListener('submit', event => {
     if (!$('#code').readOnly && holdings.some(row => row.code === item.code) && !confirm('이미 등록한 종목입니다. 투자 정보를 덮어쓸까요?')) return;
     persist(mergeHoldings(holdings, [item])); $('#editor').close();
   } catch (error) { $('#form-error').textContent = error.message; }
-});
-$('#holdings').addEventListener('click', event => {
-  const button = event.target.closest('button'); if (!button) return;
-  if (button.dataset.edit !== undefined) openEditor(items[button.dataset.edit]);
-  if (button.dataset.delete !== undefined) {
-    const item = items[button.dataset.delete];
-    if (!confirm(`${item.name}을 포트폴리오에서 삭제할까요?`)) return;
-    try { persist(holdings.filter(row => row.code !== item.code)); } catch (error) { message(error.message); }
-  }
 });
 function download(content, filename, type) {
   const url = URL.createObjectURL(new Blob([content], {type}));

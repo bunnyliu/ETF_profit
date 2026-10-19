@@ -1,5 +1,5 @@
 'use strict';
-const CACHE = 'etf-pages-v1';
+const CACHE = 'etf-pages-v2';
 const BASE = new URL('./', self.location.href);
 const ASSETS = ['./','./index.html','./style.css','./app.mjs','./portfolio.mjs','./market.mjs','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 const URLS = ASSETS.map(path => new URL(path, BASE).href);

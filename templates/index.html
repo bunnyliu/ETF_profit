@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="/"><img src="/static/icon.svg" width="32" height="32" alt=""> 나의 ETF</a>
+    <form action="/logout" method="post"><input type="hidden" name="csrf" value="{{ session.csrf }}"><button class="text-button">로그아웃</button></form>
+  </header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">MY PORTFOLIO</p><h1>나의 투자를 살펴보세요.</h1></div><button id="refresh" class="secondary">↻ 시세 새로고침</button></div>
+    <p class="muted" id="updated">등록한 종목을 불러오고 있습니다.</p>
+    <div id="message" role="status" aria-live="polite"></div>
+    <section class="overview" aria-label="포트폴리오 합계">
+      <div class="balance"><p>총 평가금액</p><h2 id="valuation">—</h2><p id="return-rate">—</p></div>
+      <div class="balance-detail"><div><span>투자금액</span><strong id="invested">—</strong></div><div><span>평가손익</span><strong id="profit">—</strong></div></div>
+    </section>
+    <p class="hint">최근 일별 시세 기준 · 실시간 체결가가 아닙니다 · 수수료·세금·분배금 제외</p>
+    <div class="section-heading"><h2>보유 ETF <span id="count" class="badge">0</span></h2><button id="add" class="secondary">＋ 종목 추가</button></div>
+    <section id="holdings" aria-live="polite"><div class="empty">포트폴리오를 불러오는 중입니다.</div></section>
+    <section class="panel backup"><div><h2>내 투자 기록 보관하기</h2><p class="muted">PC의 my_portfolio.csv를 가져오거나 현재 기록을 백업하세요.</p><p class="hint">같은 종목코드는 덮어쓰고, 나머지 종목은 유지합니다. 서버 저장공간이 초기화되면 기록이 사라질 수 있어요.</p></div><div class="backup-actions"><a class="button secondary" href="/api/export">CSV 백업</a><label class="button secondary" for="csv-file">CSV 가져오기</label><input type="file" id="csv-file" accept=".csv,text/csv" hidden></div></section>
+    <footer>수량은 투자금액 ÷ 평균 취득가로 계산합니다. 실제 보유 수량과 차이가 날 수 있습니다.<br>이 앱은 하나의 포트폴리오를 공유합니다. 접속 암호는 본인만 보관하세요.</footer>
+  </main>
+</div>
+<dialog id="editor">
+  <form id="holding-form">
+    <div class="section-heading"><h2 id="editor-title">ETF 추가</h2><button type="button" id="close" class="text-button" aria-label="닫기">✕</button></div>
+    <label for="search">ETF 검색</label><input type="search" id="search" placeholder="종목명 또는 코드 검색" autocomplete="off"><p id="search-status" class="hint">검색 목록을 불러옵니다. 아래에 직접 입력할 수도 있어요.</p><div id="search-results"></div>
+    <label for="code">종목코드</label><input id="code" name="code" placeholder="예: 069500" pattern="[0-9A-Za-z]{6}" maxlength="6" required>
+    <label for="name">종목명</label><input id="name" name="name" maxlength="100" placeholder="예: KODEX 200" required>
+    <label for="buy">1주당 평균 취득가 (원)</label><input id="buy" name="buy" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000000000000000" required>
+    <label for="invested-input">총 투자금액 (원)</label><input id="invested-input" name="invested" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000000000000000" required>
+    <p id="form-error" role="alert" class="negative"></p><button id="save" type="submit">저장하기</button>
+  </form>
+</dialog>
+<script src="/static/app.js" defer></script>
+{% endblock %}

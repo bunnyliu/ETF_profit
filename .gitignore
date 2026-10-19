@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.data/
+.env
+my_portfolio.csv
+*.sqlite3*

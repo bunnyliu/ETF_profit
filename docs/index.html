@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#123b32">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="나의 ETF">
+  <meta name="description" content="나의 ETF 투자 기록과 수익률. 투자 내역은 이 기기에 저장됩니다.">
+  <title>나의 ETF · 포트폴리오</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="./"><img src="./icon.svg" width="32" height="32" alt=""> 나의 ETF</a>
+    <span class="hint">이 기기에 저장됨</span>
+  </header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">MY PORTFOLIO</p><h1>나의 투자를 살펴보세요.</h1></div><button id="refresh" class="secondary">↻ 시세 조회</button></div>
+    <p class="muted" id="updated">등록한 종목을 불러오고 있습니다.</p>
+    <div id="message" role="status" aria-live="polite"></div><div id="market-notice" role="status" aria-live="polite"></div><div id="storage-notice" role="alert"></div>
+    <section class="overview" aria-label="포트폴리오 합계">
+      <div class="balance"><p>총 평가금액</p><h2 id="valuation">—</h2><p id="return-rate">—</p></div>
+      <div class="balance-detail"><div><span>투자금액</span><strong id="invested">—</strong></div><div><span>평가손익</span><strong id="profit">—</strong></div></div>
+    </section>
+    <p class="hint">화면을 열거나 시세 조회 버튼을 누를 때 가격을 가져옵니다. 제공처 가격은 실제 체결가와 차이가 날 수 있습니다. 수수료·세금·분배금 제외.</p>
+    <div class="section-heading"><h2>보유 ETF <span id="count" class="badge">0</span></h2><button id="add" class="secondary">＋ 종목 추가</button></div>
+    <section id="holdings" aria-live="polite"><div class="empty">포트폴리오를 불러오는 중입니다.</div></section>
+    <section class="panel backup"><div><h2>내 투자 기록 보관하기</h2><p class="muted">PC의 my_portfolio.csv를 가져오거나 현재 기록을 백업하세요.</p><p class="hint">같은 종목코드는 덮어쓰고, 나머지 종목은 유지합니다. 투자 내역은 이 브라우저에만 저장됩니다. 기기 변경·브라우저 데이터 삭제 전에 백업해 주세요.</p></div><div class="backup-actions"><button class="button secondary" id="export">CSV 백업</button><label class="button secondary" for="csv-file">CSV 가져오기</label><input type="file" id="csv-file" accept=".csv,text/csv" hidden></div></section>
+    <footer>수량은 투자금액 ÷ 평균 취득가로 계산합니다. 실제 보유 수량과 차이가 날 수 있습니다.<br>투자 내역은 서버로 전송하지 않습니다. PC·Safari·홈 화면 앱의 기록은 자동 동기화되지 않습니다.</footer>
+  </main>
+</div>
+<dialog id="editor">
+  <form id="holding-form">
+    <div class="section-heading"><h2 id="editor-title">ETF 추가</h2><button type="button" id="close" class="text-button" aria-label="닫기">✕</button></div>
+    <label for="search">ETF 검색</label><input type="search" id="search" placeholder="종목명 또는 코드 검색" autocomplete="off"><p id="search-status" class="hint">검색 목록을 불러옵니다. 아래에 직접 입력할 수도 있어요.</p><div id="search-results"></div>
+    <label for="code">종목코드</label><input id="code" name="code" placeholder="예: 069500" pattern="[0-9A-Za-z]{6}" maxlength="6" required>
+    <label for="name">종목명</label><input id="name" name="name" maxlength="100" placeholder="예: KODEX 200" required>
+    <label for="buy">1주당 평균 취득가 (원)</label><input id="buy" name="buy" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000000000000000" required>
+    <label for="invested-input">총 투자금액 (원)</label><input id="invested-input" name="invested" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000000000000000" required>
+    <p id="form-error" role="alert" class="negative"></p><button id="save" type="submit">저장하기</button>
+  </form>
+</dialog>
+<script src="./app.mjs" type="module"></script>
+
+</body>
+</html>

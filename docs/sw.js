@@ -1,7 +1,7 @@
 'use strict';
-const CACHE = 'etf-pages-v5';
+const CACHE = 'etf-pages-v6';
 const BASE = new URL('./', self.location.href);
-const ASSETS = ['./','./index.html','./style.css?v=5','./app.mjs?v=5','./portfolio.mjs','./market.mjs','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
+const ASSETS = ['./','./index.html','./style.css?v=6','./app.mjs?v=5','./portfolio.mjs','./market.mjs','./manifest.webmanifest','./icon.svg','./icon-192.png','./icon-512.png'];
 const URLS = ASSETS.map(path => new URL(path, BASE).href);
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(URLS)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key.startsWith('etf-pages-') && key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));

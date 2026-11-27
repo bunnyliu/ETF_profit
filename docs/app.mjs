@@ -48,7 +48,7 @@ function render() {
     <article class="holding">
       <div class="holding-top">
         <h3 title="${html(item.name)}">${html(item.name)}</h3>
-        <span class="holding-daily ${tone(item.change_rate)}" aria-label="금일 등락률 ${percent(item.change_rate)}" title="금일 등락률 (마지막 조회 시세 기준)">오늘 ${percent(item.change_rate)}</span>
+        <span class="holding-daily ${tone(item.change_rate)}" aria-label="금일 등락률 ${percent(item.change_rate)}" title="금일 등락률 (마지막 조회 시세 기준)">${percent(item.change_rate)}</span>
         <strong class="holding-return ${tone(item.return_rate)}" aria-label="누적 수익률 ${percent(item.return_rate)}" title="${html(item.error || '누적 수익률')}">${percent(item.return_rate)}</strong>
       </div>
       <div class="holding-details"><div><span>투자금액</span><strong title="${money(item.invested)}">${money(item.invested)}</strong></div><div><span>평가손익</span><strong class="${tone(item.profit)}" title="${money(item.profit)}">${money(item.profit)}</strong></div></div>
@@ -123,6 +123,26 @@ window.addEventListener('storage', event => {
   try { holdings = validateHoldings(JSON.parse(event.newValue || '[]')); render(); }
   catch (_) { fatalStorage = true; notice('#storage-notice', '다른 창의 기록을 읽을 수 없습니다. 새로 열기 전에 원본을 백업해 주세요.'); }
 });
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+if ('serviceWorker' in navigator) {
+  // An existing home-screen window needs to load the newly activated assets.
+  const wasControlled = Boolean(navigator.serviceWorker.controller);
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!wasControlled || reloading) return;
+    reloading = true;
+    // Keep any unsaved editor input until the user closes the dialog.
+    const reloadWhenReady = () => {
+      if ($('#editor').open) $('#editor').addEventListener('close', () => location.reload(), {once:true});
+      else location.reload();
+    };
+    reloadWhenReady();
+  });
+  navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'}).then(registration => {
+    registration.update().catch(() => {});
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) registration.update().catch(() => {});
+    });
+  }).catch(() => {});
+}
 render();
 if (navigator.onLine) refresh();

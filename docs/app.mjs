@@ -48,7 +48,7 @@ function render() {
     <article class="holding">
       <div class="holding-top">
         <h3 title="${html(item.name)}">${html(item.name)}</h3>
-        <span class="holding-daily ${tone(item.change_rate)}" aria-label="금일 등락률 ${percent(item.change_rate)}" title="금일 등락률 (마지막 조회 시세 기준)">${percent(item.change_rate)}</span>
+        <span class="holding-daily ${tone(item.change_rate)}" aria-label="금일 등락률 ${percent(item.change_rate)}" title="금일 등락률 (마지막 조회 시세 기준)">오늘 ${percent(item.change_rate)}</span>
         <strong class="holding-return ${tone(item.return_rate)}" aria-label="누적 수익률 ${percent(item.return_rate)}" title="${html(item.error || '누적 수익률')}">${percent(item.return_rate)}</strong>
       </div>
       <div class="holding-details"><div><span>투자금액</span><strong title="${money(item.invested)}">${money(item.invested)}</strong></div><div><span>평가손익</span><strong class="${tone(item.profit)}" title="${money(item.profit)}">${money(item.profit)}</strong></div></div>
